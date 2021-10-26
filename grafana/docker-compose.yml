@@ -1,0 +1,22 @@
+version: "2"
+
+services:
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.entrypoints=websecure"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.tornade.cefim-formation.org`)"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+    networks:
+      - traefik_proxy
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+volumes:
+  grafana-data:
+networks:
+  traefik_proxy:
+    name: traefik_proxy
+

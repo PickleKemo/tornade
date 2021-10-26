@@ -1,0 +1,30 @@
+---
+version: '3.7'
+
+volumes:
+    prometheus_data:
+
+networks:
+  traefik_proxy:
+    name: traefik_proxy
+
+services:
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - /etc/prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.prometheus.entrypoints=websecure
+      - traefik.http.routers.prometheus.rule=Host(`prometheus.tornade.cefim-formation.org`)
+
+    networks:
+      - traefik_proxy
+    restart: always
